@@ -1,0 +1,582 @@
+@import 'tailwindcss';
+
+@import 'tw-animate-css';
+
+@source '../views';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+
+@theme {
+    --font-sans:
+        'Poppins', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+        'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+    --radius-lg: var(--radius);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-sm: calc(var(--radius) - 4px);
+
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+
+    --color-sidebar: var(--sidebar);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-ring: var(--sidebar-ring);
+}
+
+/* ============================================
+   BRAND COLORS - Requirements 11.1, 11.5
+   SIAP Impact / SAKINA Design Palette
+   Brand Blue: #155EBB | Sky Blue: #74C4F5 | Impact Yellow: #FCC900
+   ============================================ */
+
+:root {
+    /* Core brand - Light Theme */
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.145 0 0);
+
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.145 0 0);
+
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.145 0 0);
+
+    --primary: oklch(0.494 0.162 257.3); /* #155EBB - Brand Blue */
+    --primary-foreground: oklch(1 0 0); /* white */
+
+    --secondary: oklch(0.788 0.105 237.1); /* #74C4F5 - Sky Blue */
+    --secondary-foreground: oklch(0.145 0 0);
+
+    --muted: oklch(0.96 0.03 240);
+    --muted-foreground: oklch(0.45 0.02 250);
+
+    --accent: oklch(0.856 0.175 90.1); /* #FCC900 - Impact Yellow */
+    --accent-foreground: oklch(0.145 0 0);
+
+    --destructive: oklch(0.6 0.23 25);
+    --destructive-foreground: oklch(1 0 0);
+
+    --border: oklch(0.92 0.02 250);
+    --input: oklch(0.92 0.02 250);
+    --ring: oklch(0.88 0.03 250);
+
+    --chart-1: oklch(0.646 0.222 41.116);
+    --chart-2: oklch(0.6 0.118 184.704);
+    --chart-3: oklch(0.398 0.07 227.392);
+    --chart-4: oklch(0.828 0.189 84.429);
+    --chart-5: oklch(0.769 0.188 70.08);
+
+    --radius: 0.625rem;
+
+    --sidebar: oklch(0.98 0.03 240);
+    --sidebar-foreground: oklch(0.145 0 0);
+    --sidebar-primary: oklch(0.494 0.162 257.3);
+    --sidebar-primary-foreground: oklch(1 0 0);
+    --sidebar-accent: oklch(0.856 0.175 90.1);
+    --sidebar-accent-foreground: oklch(0.145 0 0);
+    --sidebar-border: oklch(0.92 0.02 250);
+    --sidebar-ring: oklch(0.88 0.03 250);
+}
+
+/* Dark Theme - Requirements 11.5 */
+.dark {
+    --background: oklch(0.145 0 0);
+    --foreground: oklch(0.98 0 0);
+
+    --card: oklch(0.17 0.01 250);
+    --card-foreground: oklch(0.98 0 0);
+
+    --popover: oklch(0.17 0.01 250);
+    --popover-foreground: oklch(0.98 0 0);
+
+    /* Brand Blue - slightly lightened for dark bg */
+    --primary: oklch(0.62 0.16 257.3);
+    --primary-foreground: oklch(0.98 0 0);
+
+    /* Sky Blue - darkened for dark theme */
+    --secondary: oklch(0.6 0.09 237.1);
+    --secondary-foreground: oklch(0.98 0 0);
+
+    --muted: oklch(0.26 0.02 250);
+    --muted-foreground: oklch(0.7 0.02 250);
+
+    /* Impact Yellow - slightly muted for dark theme */
+    --accent: oklch(0.8 0.17 90.1);
+    --accent-foreground: oklch(0.145 0 0);
+
+    --destructive: oklch(0.45 0.2 25);
+    --destructive-foreground: oklch(0.98 0 0);
+
+    --border: oklch(0.26 0.02 250);
+    --input: oklch(0.26 0.02 250);
+    --ring: oklch(0.45 0.03 250);
+
+    --chart-1: oklch(0.746 0.222 41.116);
+    --chart-2: oklch(0.7 0.118 184.704);
+    --chart-3: oklch(0.498 0.07 227.392);
+    --chart-4: oklch(0.828 0.189 84.429);
+    --chart-5: oklch(0.769 0.188 70.08);
+
+    --sidebar: oklch(0.2 0.02 250);
+    --sidebar-foreground: oklch(0.98 0 0);
+    --sidebar-primary: oklch(0.55 0.16 257.3);
+    --sidebar-primary-foreground: oklch(0.98 0 0);
+    --sidebar-accent: oklch(0.8 0.17 90.1);
+    --sidebar-accent-foreground: oklch(0.145 0 0);
+    --sidebar-border: oklch(0.26 0.02 250);
+    --sidebar-ring: oklch(0.45 0.03 250);
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-background text-foreground;
+    }
+}
+
+/* ============================================
+   MICRO-ANIMATIONS - Requirements 6.1, 6.3
+   ============================================ */
+
+/* Base transition utilities for interactive elements */
+@layer utilities {
+    /* Smooth hover transition for buttons - 200ms as per Requirements 6.1 */
+    .hover-lift {
+        transition:
+            transform 200ms ease-out,
+            box-shadow 200ms ease-out;
+    }
+
+    .hover-lift:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .hover-lift:active {
+        transform: translateY(0);
+    }
+
+    /* Scale hover effect for cards and buttons */
+    .hover-scale {
+        transition:
+            transform 200ms ease-out,
+            box-shadow 200ms ease-out;
+    }
+
+    .hover-scale:hover {
+        transform: scale(1.02);
+    }
+
+    .hover-scale:active {
+        transform: scale(0.98);
+    }
+
+    /* Subtle scale for smaller elements */
+    .hover-scale-sm {
+        transition: transform 200ms ease-out;
+    }
+
+    .hover-scale-sm:hover {
+        transform: scale(1.05);
+    }
+
+    /* Opacity fade hover effect */
+    .hover-fade {
+        transition: opacity 200ms ease-out;
+    }
+
+    .hover-fade:hover {
+        opacity: 0.8;
+    }
+
+    /* Color transition for links and text */
+    .hover-color {
+        transition: color 200ms ease-out;
+    }
+
+    /* Background color transition */
+    .hover-bg {
+        transition: background-color 200ms ease-out;
+    }
+
+    /* Border color transition */
+    .hover-border {
+        transition: border-color 200ms ease-out;
+    }
+
+    /* Combined transition for interactive elements */
+    .interactive {
+        transition:
+            transform 200ms ease-out,
+            box-shadow 200ms ease-out,
+            background-color 200ms ease-out,
+            border-color 200ms ease-out,
+            color 200ms ease-out,
+            opacity 200ms ease-out;
+    }
+
+    /* Button press feedback - Requirements 6.3 */
+    .press-feedback:active {
+        transform: scale(0.97);
+        transition: transform 100ms ease-out;
+    }
+
+    /* Icon hover rotation */
+    .hover-rotate {
+        transition: transform 200ms ease-out;
+    }
+
+    .hover-rotate:hover {
+        transform: rotate(5deg);
+    }
+
+    /* Arrow slide on hover */
+    .group:hover .group-hover-slide-right {
+        transform: translateX(4px);
+        transition: transform 200ms ease-out;
+    }
+
+    .group-hover-slide-right {
+        transition: transform 200ms ease-out;
+    }
+}
+
+@keyframes fade-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slide-in-left {
+    from {
+        opacity: 0;
+        transform: translateX(-24px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slide-in-right {
+    from {
+        opacity: 0;
+        transform: translateX(24px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes scale-in {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Scroll-triggered animation classes - hidden by default */
+.scroll-animate {
+    opacity: 0;
+}
+
+.scroll-animate.scroll-animate-visible {
+    animation-fill-mode: forwards;
+}
+
+/* Fade in up animation - Requirement 11.2 */
+.scroll-animate-fade-up {
+    opacity: 0;
+    transform: translateY(24px);
+}
+
+.scroll-animate-fade-up.scroll-animate-visible {
+    animation: fade-in-up 0.6s ease-out forwards;
+}
+
+/* Fade in animation */
+.scroll-animate-fade {
+    opacity: 0;
+}
+
+.scroll-animate-fade.scroll-animate-visible {
+    animation: fade-in 0.5s ease-out forwards;
+}
+
+/* Slide in from left */
+.scroll-animate-slide-left {
+    opacity: 0;
+    transform: translateX(-24px);
+}
+
+.scroll-animate-slide-left.scroll-animate-visible {
+    animation: slide-in-left 0.6s ease-out forwards;
+}
+
+/* Slide in from right */
+.scroll-animate-slide-right {
+    opacity: 0;
+    transform: translateX(24px);
+}
+
+.scroll-animate-slide-right.scroll-animate-visible {
+    animation: slide-in-right 0.6s ease-out forwards;
+}
+
+/* Scale in animation */
+.scroll-animate-scale {
+    opacity: 0;
+    transform: scale(0.95);
+}
+
+.scroll-animate-scale.scroll-animate-visible {
+    animation: scale-in 0.5s ease-out forwards;
+}
+
+.animate-fade-in-up {
+    animation: fade-in-up 0.6s ease-out forwards;
+}
+
+/* ============================================
+   STAGGERED ENTRANCE ANIMATIONS - Requirements 6.2, 6.4
+   ============================================ */
+
+/* Staggered animation delays for card grids */
+.stagger-1 {
+    animation-delay: 0ms;
+}
+.stagger-2 {
+    animation-delay: 75ms;
+}
+.stagger-3 {
+    animation-delay: 150ms;
+}
+.stagger-4 {
+    animation-delay: 225ms;
+}
+.stagger-5 {
+    animation-delay: 300ms;
+}
+.stagger-6 {
+    animation-delay: 375ms;
+}
+.stagger-7 {
+    animation-delay: 450ms;
+}
+.stagger-8 {
+    animation-delay: 525ms;
+}
+
+/* Enhanced slide-up animation with bounce */
+@keyframes slide-up-bounce {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    60% {
+        opacity: 1;
+        transform: translateY(-5px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.scroll-animate-slide-up-bounce {
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+.scroll-animate-slide-up-bounce.scroll-animate-visible {
+    animation: slide-up-bounce 0.5s ease-out forwards;
+}
+
+/* Zoom in animation for emphasis */
+@keyframes zoom-in {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.scroll-animate-zoom {
+    opacity: 0;
+    transform: scale(0.9);
+}
+
+.scroll-animate-zoom.scroll-animate-visible {
+    animation: zoom-in 0.4s ease-out forwards;
+}
+
+/* Blur in animation */
+@keyframes blur-in {
+    from {
+        opacity: 0;
+        filter: blur(10px);
+    }
+    to {
+        opacity: 1;
+        filter: blur(0);
+    }
+}
+
+.scroll-animate-blur {
+    opacity: 0;
+    filter: blur(10px);
+}
+
+.scroll-animate-blur.scroll-animate-visible {
+    animation: blur-in 0.5s ease-out forwards;
+}
+
+/* ============================================
+   REDUCED MOTION SUPPORT - Requirements 6.5
+   Respects user preferences via prefers-reduced-motion
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+    /* Disable all scroll-triggered animations */
+    .scroll-animate,
+    .scroll-animate-fade-up,
+    .scroll-animate-fade,
+    .scroll-animate-slide-left,
+    .scroll-animate-slide-right,
+    .scroll-animate-scale,
+    .scroll-animate-slide-up-bounce,
+    .scroll-animate-zoom,
+    .scroll-animate-blur {
+        opacity: 1 !important;
+        transform: none !important;
+        filter: none !important;
+        animation: none !important;
+        transition: none !important;
+    }
+
+    .scroll-animate.scroll-animate-visible,
+    .scroll-animate-fade-up.scroll-animate-visible,
+    .scroll-animate-fade.scroll-animate-visible,
+    .scroll-animate-slide-left.scroll-animate-visible,
+    .scroll-animate-slide-right.scroll-animate-visible,
+    .scroll-animate-scale.scroll-animate-visible,
+    .scroll-animate-slide-up-bounce.scroll-animate-visible,
+    .scroll-animate-zoom.scroll-animate-visible,
+    .scroll-animate-blur.scroll-animate-visible {
+        animation: none !important;
+    }
+
+    /* Disable legacy animation class */
+    .animate-fade-in-up {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+    }
+
+    /* Disable hover scale effects */
+    .hover\:scale-105:hover,
+    .hover\:scale-110:hover,
+    .hover-scale:hover,
+    .hover-scale-sm:hover,
+    .hover-lift:hover {
+        transform: none !important;
+    }
+
+    /* Disable micro-animation utilities */
+    .hover-lift,
+    .hover-scale,
+    .hover-scale-sm,
+    .hover-rotate,
+    .interactive,
+    .press-feedback {
+        transition: none !important;
+    }
+
+    .hover-lift:hover,
+    .hover-lift:active,
+    .hover-scale:hover,
+    .hover-scale:active,
+    .press-feedback:active {
+        transform: none !important;
+    }
+
+    /* Disable staggered animation delays */
+    .stagger-1,
+    .stagger-2,
+    .stagger-3,
+    .stagger-4,
+    .stagger-5,
+    .stagger-6,
+    .stagger-7,
+    .stagger-8 {
+        animation-delay: 0ms !important;
+    }
+
+    /* Disable all transitions and animations globally */
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}

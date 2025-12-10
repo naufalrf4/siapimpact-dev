@@ -1,0 +1,40 @@
+{
+  "name": "SIAP Impact - Program Pengembangan Talenta Muda Indonesia",
+  "short_name": "SIAP Impact",
+  "description": "Program pengembangan talenta muda Indonesia untuk generasi unggul",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#155EBB",
+  "background_color": "#FFFFFF",
+  "icons": [
+    {
+      "src": "/images/logo/sakina.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/logo/sakina.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["education", "productivity"],
+  "screenshots": [
+    {
+      "src": "/images/logo/sakina.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ]
+}
