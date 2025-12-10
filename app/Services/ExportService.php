@@ -2,17 +2,17 @@
 
 namespace App\Services;
 
-use App\Exports\ApplicantsExport;
 use App\Models\Applicant;
 use App\Services\Contracts\ExportServiceInterface;
 use Illuminate\Support\Facades\Log;
-use Maatwebsite\Excel\Facades\Excel;
+use OpenSpout\Common\Entity\Row;
+use OpenSpout\Writer\XLSX\Writer;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ExportService implements ExportServiceInterface
 {
-    protected array $csvHeaders = [
+    protected array $headers = [
         'ID',
         'Full Name',
         'National ID (NIK)',
@@ -47,7 +47,7 @@ class ExportService implements ExportServiceInterface
 
             fwrite($handle, "\xEF\xBB\xBF");
 
-            fputcsv($handle, $this->csvHeaders);
+            fputcsv($handle, $this->headers);
 
             $this->getFilteredQuery($filters)
                 ->orderBy('created_at', 'desc')
@@ -72,16 +72,38 @@ class ExportService implements ExportServiceInterface
     public function exportToExcel(array $filters = []): BinaryFileResponse
     {
         $filename = $this->generateFilename('xlsx');
+        $tempPath = storage_path('app/temp/' . $filename);
+
+        // Ensure temp directory exists
+        if (!is_dir(dirname($tempPath))) {
+            mkdir(dirname($tempPath), 0755, true);
+        }
 
         Log::info('Export to Excel initiated', [
             'filters' => $filters,
             'filename' => $filename,
         ]);
 
-        return Excel::download(
-            new ApplicantsExport($filters),
-            $filename
-        );
+        $writer = new Writer();
+        $writer->openToFile($tempPath);
+
+        // Write header row
+        $writer->addRow(Row::fromValues($this->headers));
+
+        // Write data rows in chunks
+        $this->getFilteredQuery($filters)
+            ->orderBy('created_at', 'desc')
+            ->chunk(500, function ($applicants) use ($writer) {
+                foreach ($applicants as $applicant) {
+                    $writer->addRow(Row::fromValues($this->mapApplicantToRow($applicant)));
+                }
+            });
+
+        $writer->close();
+
+        return response()->download($tempPath, $filename, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ])->deleteFileAfterSend(true);
     }
 
     protected function getFilteredQuery(array $filters): \Illuminate\Database\Eloquent\Builder
