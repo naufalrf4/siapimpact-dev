@@ -41,7 +41,6 @@ class RegistrationRequest extends FormRequest
             // Document files: max 10MB for recommendation letter and essay
             // Image files: max 5MB for twibbon images
             'recommendation_letter' => ['required', 'file', 'mimes:pdf', 'max:10240'],
-            'twibbon_image' => ['required', 'file', 'mimes:jpg,jpeg,png', 'max:5120'],
             'twibbon_screenshot' => ['required', 'file', 'mimes:jpg,jpeg,png', 'max:5120'],
             'essay_file' => ['required', 'file', 'mimes:pdf', 'max:10240'],
 
@@ -69,8 +68,6 @@ class RegistrationRequest extends FormRequest
             'gpa.max' => 'IPK maksimal adalah 4.',
             'recommendation_letter.mimes' => 'Surat rekomendasi harus berformat PDF.',
             'recommendation_letter.max' => 'Ukuran surat rekomendasi maksimal 10MB.',
-            'twibbon_image.mimes' => 'Foto twibbon harus berformat JPG atau PNG.',
-            'twibbon_image.max' => 'Ukuran foto twibbon maksimal 5MB.',
             'twibbon_screenshot.mimes' => 'Screenshot twibbon harus berformat JPG atau PNG.',
             'twibbon_screenshot.max' => 'Ukuran screenshot twibbon maksimal 5MB.',
             'essay_file.mimes' => 'Essay harus berformat PDF.',
@@ -98,7 +95,6 @@ class RegistrationRequest extends FormRequest
             'semester' => 'semester',
             'gpa' => 'IPK',
             'recommendation_letter' => 'surat rekomendasi',
-            'twibbon_image' => 'foto twibbon',
             'twibbon_screenshot' => 'screenshot twibbon',
             'essay_file' => 'essay',
         ];

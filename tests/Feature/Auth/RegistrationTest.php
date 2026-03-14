@@ -64,6 +64,17 @@ class RegistrationTest extends TestCase
             'email' => 'test@example.com',
             'national_id' => '1234567890123456',
         ]);
+
+        $applicant = Applicant::where('email', 'test@example.com')->first();
+
+        $this->assertNotNull($applicant);
+        $this->assertNull($applicant->twibbon_image_path);
+        $this->assertNotNull($applicant->twibbon_screenshot_path);
+
+        $this->assertTrue(
+            Storage::disk('siapimpact')->exists($applicant->twibbon_screenshot_path)
+        );
+        $this->assertSame([], Storage::disk('siapimpact')->files('twibbon_images'));
     }
 
     /**
@@ -166,11 +177,11 @@ class RegistrationTest extends TestCase
     {
         $data = $this->validRegistrationData();
         // Create a file larger than 5MB limit (6000KB = 6MB)
-        $data['twibbon_image'] = UploadedFile::fake()->create('photo.jpg', 6000, 'image/jpeg');
+        $data['twibbon_screenshot'] = UploadedFile::fake()->create('photo.jpg', 6000, 'image/jpeg');
 
         $response = $this->postWithoutCsrf(route('register.store'), $data);
 
-        $response->assertSessionHasErrors(['twibbon_image']);
+        $response->assertSessionHasErrors(['twibbon_screenshot']);
     }
 
     /**
@@ -204,7 +215,6 @@ class RegistrationTest extends TestCase
             'semester' => 5,
             'gpa' => 3.50,
             'recommendation_letter' => UploadedFile::fake()->create('recommendation.pdf', 500, 'application/pdf'),
-            'twibbon_image' => UploadedFile::fake()->create('twibbon.jpg', 500, 'image/jpeg'),
             'twibbon_screenshot' => UploadedFile::fake()->create('screenshot.png', 500, 'image/png'),
             'essay_file' => UploadedFile::fake()->create('essay.pdf', 1000, 'application/pdf'),
             'website' => '', // honeypot field must be empty

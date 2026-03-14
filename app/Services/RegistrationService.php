@@ -29,7 +29,6 @@ class RegistrationService implements RegistrationServiceInterface
             return DB::transaction(function () use ($data, $files, $ip, &$storedPaths) {
                 $fileTypes = [
                     'recommendation_letter' => 'recommendation_letter',
-                    'twibbon_image' => 'twibbon_image',
                     'twibbon_screenshot' => 'twibbon_screenshot',
                     'essay_file' => 'essay',
                 ];
@@ -82,7 +81,7 @@ class RegistrationService implements RegistrationServiceInterface
             'semester' => $data['semester'],
             'gpa' => $data['gpa'],
             'recommendation_letter_path' => $storedPaths['recommendation_letter'] ?? null,
-            'twibbon_image_path' => $storedPaths['twibbon_image'] ?? null,
+            'twibbon_image_path' => null,
             'twibbon_screenshot_path' => $storedPaths['twibbon_screenshot'] ?? null,
             'essay_file_path' => $storedPaths['essay'] ?? null,
             'ip_address' => $ip,
