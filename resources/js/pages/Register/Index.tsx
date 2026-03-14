@@ -1,12 +1,20 @@
 import { store } from '@/actions/App/Http/Controllers/Public/RegistrationController';
 import { Form, Head } from '@inertiajs/react';
-import { AlertCircle, FileTextIcon, ImageIcon, Save, UploadIcon } from 'lucide-react';
+import {
+    AlertCircle,
+    Download,
+    FileTextIcon,
+    ImageIcon,
+    Save,
+    UploadIcon,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import AlertError from '@/components/alert-error';
 import InputError from '@/components/input-error';
 import { LandingNavbar } from '@/components/landing/landing-navbar';
+import { TwibbonEditorModal } from '@/components/register/twibbon-editor-modal';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -25,26 +33,28 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
-import { clearDraft, hasDraft, loadDraft, saveDraft } from '@/lib/draft-storage';
+import {
+    clearDraft,
+    hasDraft,
+    loadDraft,
+    saveDraft,
+} from '@/lib/draft-storage';
 import { validateField } from '@/lib/form-validation';
 
 interface FileState {
     recommendation_letter: File | null;
-    twibbon_image: File | null;
     twibbon_screenshot: File | null;
     essay_file: File | null;
 }
 
 interface FileError {
     recommendation_letter: string | null;
-    twibbon_image: string | null;
     twibbon_screenshot: string | null;
     essay_file: string | null;
 }
 
 const FILE_SIZE_LIMITS = {
     recommendation_letter: 10 * 1024 * 1024, // 10MB
-    twibbon_image: 5 * 1024 * 1024, // 5MB
     twibbon_screenshot: 5 * 1024 * 1024, // 5MB
     essay_file: 10 * 1024 * 1024, // 10MB
 };
@@ -64,21 +74,24 @@ export default function Register() {
         gpa: '',
     });
 
-    const [validationWarnings, setValidationWarnings] = useState<Record<string, string>>({});
-    const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
+    const [validationWarnings, setValidationWarnings] = useState<
+        Record<string, string>
+    >({});
+    const [autoSaveStatus, setAutoSaveStatus] = useState<
+        'idle' | 'saving' | 'saved'
+    >('idle');
     const [draftLoaded, setDraftLoaded] = useState(false);
     const [idleTimer, setIdleTimer] = useState<NodeJS.Timeout | null>(null);
+    const [isTwibbonModalOpen, setIsTwibbonModalOpen] = useState(false);
 
     const [files, setFiles] = useState<FileState>({
         recommendation_letter: null,
-        twibbon_image: null,
         twibbon_screenshot: null,
         essay_file: null,
     });
 
     const [fileErrors, setFileErrors] = useState<FileError>({
         recommendation_letter: null,
-        twibbon_image: null,
         twibbon_screenshot: null,
         essay_file: null,
     });
@@ -103,11 +116,13 @@ export default function Register() {
                     gpa: draft.gpa || '',
                 }));
                 toast.info('Draft sebelumnya berhasil dimuat', {
-                    description: 'Data Anda telah dipulihkan dari penyimpanan lokal',
+                    description:
+                        'Data Anda telah dipulihkan dari penyimpanan lokal',
                 });
-                setDraftLoaded(true);
             }
         }
+
+        setDraftLoaded(true);
     }, []);
 
     // Auto-save draft every 10 seconds of idle time
@@ -122,7 +137,7 @@ export default function Register() {
             setAutoSaveStatus('saving');
             saveDraft(formData);
             setAutoSaveStatus('saved');
-            
+
             setTimeout(() => {
                 setAutoSaveStatus('idle');
             }, 2000);
@@ -165,7 +180,6 @@ export default function Register() {
         switch (field) {
             case 'recommendation_letter':
                 return 'Format: PDF, Maks. 10MB';
-            case 'twibbon_image':
             case 'twibbon_screenshot':
                 return 'Format: JPG/PNG, Maks. 5MB';
             case 'essay_file':
@@ -175,25 +189,19 @@ export default function Register() {
         }
     };
 
-    const handleInputChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-    ) => {
-        const { name, value } = e.target;
+    const updateFormField = (name: keyof typeof formData, value: string) => {
         setFormData((prev) => ({
             ...prev,
             [name]: value,
         }));
 
-        // Real-time validation
-        const error = validateField(
-            name as keyof typeof validationWarnings,
-            value,
-        );
-        
+        const error = validateField(name, value);
+
         setValidationWarnings((prev) => {
             const updated = { ...prev };
             if (error) {
-                updated[name] = `${error.type === 'error' ? '⚠️' : 'ℹ️'} ${error.message}`;
+                updated[name] =
+                    `${error.type === 'error' ? '⚠️' : 'ℹ️'} ${error.message}`;
             } else {
                 delete updated[name];
             }
@@ -201,11 +209,19 @@ export default function Register() {
         });
     };
 
+    const handleInputChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    ) => {
+        const { name, value } = e.target;
+
+        updateFormField(name as keyof typeof formData, value);
+    };
+
     const handleSaveDraft = () => {
         setAutoSaveStatus('saving');
         saveDraft(formData);
         setAutoSaveStatus('saved');
-        
+
         toast.success('Draft berhasil disimpan!', {
             description: 'Anda dapat melanjutkan pengisian formulir nanti',
         });
@@ -215,13 +231,20 @@ export default function Register() {
         }, 2000);
     };
 
-    const handleFormSubmit = () => {
+    const handleFormSuccess = () => {
         clearDraft();
-        setTimeout(() => {
-            toast.success('Pendaftaran berhasil disubmit!', {
-                description: 'Terima kasih telah mendaftar di program SIAP Impact',
-            });
-        }, 500);
+
+        toast.success('Pendaftaran berhasil disubmit!', {
+            description: 'Terima kasih telah mendaftar di program SIAP Impact',
+        });
+    };
+
+    const handleCopyTwibbonCaption = async (caption: string) => {
+        await navigator.clipboard.writeText(caption);
+        toast.success('Caption berhasil disalin!', {
+            description:
+                'Tempel caption saat Anda mengunggah twibbon ke Instagram.',
+        });
     };
 
     return (
@@ -344,6 +367,7 @@ export default function Register() {
                             method="post"
                             encType="multipart/form-data"
                             className="space-y-6"
+                            onSuccess={handleFormSuccess}
                         >
                             {({ processing, errors }) => (
                                 <>
@@ -382,13 +406,16 @@ export default function Register() {
                                                     onChange={handleInputChange}
                                                     placeholder="Masukkan nama lengkap sesuai KTP"
                                                     aria-invalid={
-                                                        !!errors.full_name || !!validationWarnings.full_name
+                                                        !!errors.full_name ||
+                                                        !!validationWarnings.full_name
                                                     }
                                                 />
                                                 {validationWarnings.full_name && (
-                                                    <p className="text-xs text-amber-600 flex items-center gap-1">
+                                                    <p className="flex items-center gap-1 text-xs text-amber-600">
                                                         <AlertCircle className="h-3 w-3" />
-                                                        {validationWarnings.full_name}
+                                                        {
+                                                            validationWarnings.full_name
+                                                        }
                                                     </p>
                                                 )}
                                                 <InputError
@@ -411,13 +438,16 @@ export default function Register() {
                                                     onChange={handleInputChange}
                                                     placeholder="Masukkan 16 digit NIK"
                                                     aria-invalid={
-                                                        !!errors.national_id || !!validationWarnings.national_id
+                                                        !!errors.national_id ||
+                                                        !!validationWarnings.national_id
                                                     }
                                                 />
                                                 {validationWarnings.national_id && (
-                                                    <p className="text-xs text-amber-600 flex items-center gap-1">
+                                                    <p className="flex items-center gap-1 text-xs text-amber-600">
                                                         <AlertCircle className="h-3 w-3" />
-                                                        {validationWarnings.national_id}
+                                                        {
+                                                            validationWarnings.national_id
+                                                        }
                                                     </p>
                                                 )}
                                                 <InputError
@@ -436,6 +466,12 @@ export default function Register() {
                                                         name="birth_place"
                                                         type="text"
                                                         required
+                                                        value={
+                                                            formData.birth_place
+                                                        }
+                                                        onChange={
+                                                            handleInputChange
+                                                        }
                                                         placeholder="Kota/Kabupaten"
                                                         aria-invalid={
                                                             !!errors.birth_place
@@ -456,6 +492,12 @@ export default function Register() {
                                                         name="birth_date"
                                                         type="date"
                                                         required
+                                                        value={
+                                                            formData.birth_date
+                                                        }
+                                                        onChange={
+                                                            handleInputChange
+                                                        }
                                                         aria-invalid={
                                                             !!errors.birth_date
                                                         }
@@ -482,13 +524,16 @@ export default function Register() {
                                                     onChange={handleInputChange}
                                                     placeholder="08xxxxxxxxxx"
                                                     aria-invalid={
-                                                        !!errors.phone || !!validationWarnings.phone
+                                                        !!errors.phone ||
+                                                        !!validationWarnings.phone
                                                     }
                                                 />
                                                 {validationWarnings.phone && (
-                                                    <p className="text-xs text-amber-600 flex items-center gap-1">
+                                                    <p className="flex items-center gap-1 text-xs text-amber-600">
                                                         <AlertCircle className="h-3 w-3" />
-                                                        {validationWarnings.phone}
+                                                        {
+                                                            validationWarnings.phone
+                                                        }
                                                     </p>
                                                 )}
                                                 <InputError
@@ -510,13 +555,16 @@ export default function Register() {
                                                     onChange={handleInputChange}
                                                     placeholder="email@example.com"
                                                     aria-invalid={
-                                                        !!errors.email || !!validationWarnings.email
+                                                        !!errors.email ||
+                                                        !!validationWarnings.email
                                                     }
                                                 />
                                                 {validationWarnings.email && (
-                                                    <p className="text-xs text-amber-600 flex items-center gap-1">
+                                                    <p className="flex items-center gap-1 text-xs text-amber-600">
                                                         <AlertCircle className="h-3 w-3" />
-                                                        {validationWarnings.email}
+                                                        {
+                                                            validationWarnings.email
+                                                        }
                                                     </p>
                                                 )}
                                                 <InputError
@@ -534,6 +582,8 @@ export default function Register() {
                                                     name="domicile"
                                                     type="text"
                                                     required
+                                                    value={formData.domicile}
+                                                    onChange={handleInputChange}
                                                     placeholder="Kota/Kabupaten tempat tinggal saat ini"
                                                     aria-invalid={
                                                         !!errors.domicile
@@ -567,6 +617,8 @@ export default function Register() {
                                                     name="university"
                                                     type="text"
                                                     required
+                                                    value={formData.university}
+                                                    onChange={handleInputChange}
                                                     placeholder="Nama universitas"
                                                     aria-invalid={
                                                         !!errors.university
@@ -587,6 +639,10 @@ export default function Register() {
                                                     name="study_program"
                                                     type="text"
                                                     required
+                                                    value={
+                                                        formData.study_program
+                                                    }
+                                                    onChange={handleInputChange}
                                                     placeholder="Nama program studi"
                                                     aria-invalid={
                                                         !!errors.study_program
@@ -608,6 +664,17 @@ export default function Register() {
                                                     <Select
                                                         name="semester"
                                                         required
+                                                        value={
+                                                            formData.semester
+                                                        }
+                                                        onValueChange={(
+                                                            value,
+                                                        ) =>
+                                                            updateFormField(
+                                                                'semester',
+                                                                value,
+                                                            )
+                                                        }
                                                     >
                                                         <SelectTrigger
                                                             aria-invalid={
@@ -650,16 +717,21 @@ export default function Register() {
                                                         max="4"
                                                         required
                                                         value={formData.gpa}
-                                                        onChange={handleInputChange}
+                                                        onChange={
+                                                            handleInputChange
+                                                        }
                                                         placeholder="0.00 - 4.00"
                                                         aria-invalid={
-                                                            !!errors.gpa || !!validationWarnings.gpa
+                                                            !!errors.gpa ||
+                                                            !!validationWarnings.gpa
                                                         }
                                                     />
                                                     {validationWarnings.gpa && (
-                                                        <p className="text-xs text-amber-600 flex items-center gap-1">
+                                                        <p className="flex items-center gap-1 text-xs text-amber-600">
                                                             <AlertCircle className="h-3 w-3" />
-                                                            {validationWarnings.gpa}
+                                                            {
+                                                                validationWarnings.gpa
+                                                            }
                                                         </p>
                                                     )}
                                                     <InputError
@@ -687,6 +759,23 @@ export default function Register() {
                                                 <Label htmlFor="recommendation_letter">
                                                     Surat Rekomendasi Dosen *
                                                 </Label>
+                                                <div className="flex justify-end">
+                                                    <Button
+                                                        asChild
+                                                        type="button"
+                                                        variant="outline"
+                                                        className="ml-auto w-fit"
+                                                    >
+                                                        <a
+                                                            href="/registrations/Format%20Surat%20Rekomendasi%20Dosen.docx"
+                                                            download
+                                                        >
+                                                            <Download className="h-4 w-4" />
+                                                            Download Format
+                                                            Surat
+                                                        </a>
+                                                    </Button>
+                                                </div>
                                                 <div className="relative">
                                                     <Input
                                                         id="recommendation_letter"
@@ -735,55 +824,21 @@ export default function Register() {
                                                 />
                                             </div>
 
-                                            {/* Twibbon Image */}
-                                            <div className="grid gap-2">
-                                                <Label htmlFor="twibbon_image">
-                                                    Twibbon (Upload Hasil) *
-                                                </Label>
-                                                <Input
-                                                    id="twibbon_image"
-                                                    name="twibbon_image"
-                                                    type="file"
-                                                    accept=".jpg,.jpeg,.png"
-                                                    required
-                                                    onChange={handleFileChange(
-                                                        'twibbon_image',
-                                                    )}
-                                                    className="file:mr-4 file:rounded-md file:border-0 file:bg-primary file:px-4 file:py-1 file:text-sm file:font-medium file:text-primary-foreground hover:file:bg-primary/90"
-                                                    aria-invalid={
-                                                        !!errors.twibbon_image ||
-                                                        !!fileErrors.twibbon_image
+                                            {/* Twibbon Helper */}
+                                            <div className="flex justify-end">
+                                                <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    onClick={() =>
+                                                        setIsTwibbonModalOpen(
+                                                            true,
+                                                        )
                                                     }
-                                                />
-                                                <p className="flex items-center gap-1 text-xs text-muted-foreground">
-                                                    <ImageIcon className="h-3 w-3" />
-                                                    {getFileHint(
-                                                        'twibbon_image',
-                                                    )}
-                                                    {files.twibbon_image &&
-                                                        !fileErrors.twibbon_image && (
-                                                            <span className="ml-2 text-primary">
-                                                                ✓{' '}
-                                                                {
-                                                                    files
-                                                                        .twibbon_image
-                                                                        .name
-                                                                }
-                                                            </span>
-                                                        )}
-                                                </p>
-                                                {fileErrors.twibbon_image && (
-                                                    <InputError
-                                                        message={
-                                                            fileErrors.twibbon_image
-                                                        }
-                                                    />
-                                                )}
-                                                <InputError
-                                                    message={
-                                                        errors.twibbon_image
-                                                    }
-                                                />
+                                                    className="ml-auto w-fit"
+                                                >
+                                                    <ImageIcon className="h-4 w-4" />
+                                                    Editor Twibbon
+                                                </Button>
                                             </div>
 
                                             {/* Twibbon Screenshot */}
@@ -910,7 +965,9 @@ export default function Register() {
                                             )}
                                             {autoSaveStatus === 'saved' && (
                                                 <>
-                                                    <span className="text-lg">✓</span>
+                                                    <span className="text-lg">
+                                                        ✓
+                                                    </span>
                                                     Draft tersimpan
                                                 </>
                                             )}
@@ -934,7 +991,6 @@ export default function Register() {
                                             size="lg"
                                             className="order-1 min-w-[200px] sm:order-2"
                                             disabled={processing}
-                                            onClick={handleFormSubmit}
                                         >
                                             {processing ? (
                                                 <>
@@ -952,6 +1008,12 @@ export default function Register() {
                                 </>
                             )}
                         </Form>
+
+                        <TwibbonEditorModal
+                            open={isTwibbonModalOpen}
+                            onOpenChange={setIsTwibbonModalOpen}
+                            onCopyCaption={handleCopyTwibbonCaption}
+                        />
                     </div>
                 </div>
             </div>
