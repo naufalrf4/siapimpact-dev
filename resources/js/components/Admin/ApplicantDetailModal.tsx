@@ -60,7 +60,12 @@ interface ApplicantDetailModalProps {
     onClose: () => void;
 }
 
-type PreviewType = 'recommendation_letter' | 'twibbon_image' | 'twibbon_screenshot' | 'essay' | null;
+type PreviewType =
+    | 'recommendation_letter'
+    | 'twibbon_image'
+    | 'twibbon_screenshot'
+    | 'essay'
+    | null;
 
 export function ApplicantDetailModal({
     applicantId,
@@ -137,16 +142,17 @@ export function ApplicantDetailModal({
         });
     };
 
-    // Count available documents
+    // Count current required documents for new registrations.
     const getDocumentCount = () => {
-        if (!applicant) return { available: 0, total: 4 };
+        if (!applicant) return { available: 0, total: 3 };
+
         const available = [
             applicant.has_recommendation_letter,
-            applicant.has_twibbon_image,
             applicant.has_twibbon_screenshot,
             applicant.has_essay_file,
         ].filter(Boolean).length;
-        return { available, total: 4 };
+
+        return { available, total: 3 };
     };
 
     const getFileLabel = (type: PreviewType): string => {
@@ -190,11 +196,13 @@ export function ApplicantDetailModal({
                             )}
                             <div className="space-y-1.5">
                                 <DialogTitle className="text-xl font-semibold tracking-tight">
-                                    {previewMode ? getFileLabel(previewMode) : 'Detail Pendaftar'}
+                                    {previewMode
+                                        ? getFileLabel(previewMode)
+                                        : 'Detail Pendaftar'}
                                 </DialogTitle>
                                 <DialogDescription className="text-sm text-muted-foreground">
-                                    {previewMode 
-                                        ? 'Preview dan unduh dokumen' 
+                                    {previewMode
+                                        ? 'Preview dan unduh dokumen'
                                         : 'Informasi lengkap pendaftar SIAP Impact'}
                                 </DialogDescription>
                             </div>
@@ -231,7 +239,9 @@ export function ApplicantDetailModal({
                                         <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10">
                                             <AlertCircle className="h-8 w-8 text-destructive" />
                                         </div>
-                                        <h3 className="mb-2 text-lg font-semibold">File Tidak Ditemukan</h3>
+                                        <h3 className="mb-2 text-lg font-semibold">
+                                            File Tidak Ditemukan
+                                        </h3>
                                         <p className="mb-6 max-w-sm text-center text-sm text-muted-foreground">
                                             {previewError}
                                         </p>
@@ -248,20 +258,28 @@ export function ApplicantDetailModal({
                                         {imageLoading && (
                                             <div className="flex flex-col items-center py-12">
                                                 <RefreshCw className="mb-4 h-8 w-8 animate-spin text-primary" />
-                                                <p className="text-sm text-muted-foreground">Memuat gambar...</p>
+                                                <p className="text-sm text-muted-foreground">
+                                                    Memuat gambar...
+                                                </p>
                                             </div>
                                         )}
                                         <img
                                             src={`/admin/applicants/${applicantId}/download/${previewMode}`}
                                             alt={getFileLabel(previewMode)}
                                             className={cn(
-                                                "max-h-[60vh] w-auto rounded-lg border object-contain shadow-lg transition-opacity",
-                                                imageLoading ? "opacity-0 h-0" : "opacity-100"
+                                                'max-h-[60vh] w-auto rounded-lg border object-contain shadow-lg transition-opacity',
+                                                imageLoading
+                                                    ? 'h-0 opacity-0'
+                                                    : 'opacity-100',
                                             )}
-                                            onLoad={() => setImageLoading(false)}
+                                            onLoad={() =>
+                                                setImageLoading(false)
+                                            }
                                             onError={(e) => {
                                                 setImageLoading(false);
-                                                setPreviewError('Gagal memuat file. File mungkin tidak tersedia atau rusak.');
+                                                setPreviewError(
+                                                    'Gagal memuat file. File mungkin tidak tersedia atau rusak.',
+                                                );
                                             }}
                                         />
                                     </div>
@@ -270,9 +288,12 @@ export function ApplicantDetailModal({
                                         <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
                                             <FileText className="h-10 w-10 text-primary" />
                                         </div>
-                                        <h3 className="mb-2 text-lg font-semibold">Dokumen PDF</h3>
+                                        <h3 className="mb-2 text-lg font-semibold">
+                                            Dokumen PDF
+                                        </h3>
                                         <p className="mb-6 max-w-sm text-center text-sm text-muted-foreground">
-                                            Preview PDF tidak tersedia. Silakan unduh dokumen untuk melihat isinya.
+                                            Preview PDF tidak tersedia. Silakan
+                                            unduh dokumen untuk melihat isinya.
                                         </p>
                                     </div>
                                 )}
@@ -422,7 +443,7 @@ export function ApplicantDetailModal({
                         <Section
                             icon={<FileText className="h-4 w-4" />}
                             title="Dokumen Pendukung"
-                            description={`${getDocumentCount().available} dari ${getDocumentCount().total} dokumen tersedia`}
+                            description={`${getDocumentCount().available} dari ${getDocumentCount().total} dokumen wajib tersedia`}
                         >
                             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                                 <DocumentButton
@@ -432,19 +453,11 @@ export function ApplicantDetailModal({
                                     available={
                                         applicant.has_recommendation_letter
                                     }
-                                    onPreview={() => setPreviewMode('recommendation_letter')}
+                                    onPreview={() =>
+                                        setPreviewMode('recommendation_letter')
+                                    }
                                     onDownload={() =>
                                         handleDownload('recommendation_letter')
-                                    }
-                                />
-                                <DocumentButton
-                                    label="Foto Twibbon"
-                                    description="Gambar twibbon kampanye"
-                                    icon={<Image className="h-5 w-5" />}
-                                    available={applicant.has_twibbon_image}
-                                    onPreview={() => setPreviewMode('twibbon_image')}
-                                    onDownload={() =>
-                                        handleDownload('twibbon_image')
                                     }
                                 />
                                 <DocumentButton
@@ -452,7 +465,9 @@ export function ApplicantDetailModal({
                                     description="Bukti posting twibbon"
                                     icon={<Image className="h-5 w-5" />}
                                     available={applicant.has_twibbon_screenshot}
-                                    onPreview={() => setPreviewMode('twibbon_screenshot')}
+                                    onPreview={() =>
+                                        setPreviewMode('twibbon_screenshot')
+                                    }
                                     onDownload={() =>
                                         handleDownload('twibbon_screenshot')
                                     }
@@ -466,6 +481,30 @@ export function ApplicantDetailModal({
                                     onDownload={() => handleDownload('essay')}
                                 />
                             </div>
+
+                            {applicant.has_twibbon_image && (
+                                <div className="mt-4 border-t pt-4">
+                                    <p className="mb-3 text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase">
+                                        Dokumen legacy
+                                    </p>
+                                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                        <DocumentButton
+                                            label="Foto Twibbon"
+                                            description="File twibbon dari pendaftaran versi lama"
+                                            icon={<Image className="h-5 w-5" />}
+                                            available={
+                                                applicant.has_twibbon_image
+                                            }
+                                            onPreview={() =>
+                                                setPreviewMode('twibbon_image')
+                                            }
+                                            onDownload={() =>
+                                                handleDownload('twibbon_image')
+                                            }
+                                        />
+                                    </div>
+                                </div>
+                            )}
                         </Section>
 
                         {/* Metadata Section */}
