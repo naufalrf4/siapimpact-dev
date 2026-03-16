@@ -76,7 +76,7 @@ class ApplicantController extends Controller
                 'semester' => $applicant->semester,
                 'gpa' => $applicant->gpa,
                 'has_recommendation_letter' => !empty($applicant->recommendation_letter_path),
-                'has_twibbon_image' => !empty($applicant->twibbon_image_path),
+                'has_instagram_follow_proof' => !empty($applicant->twibbon_image_path),
                 'has_twibbon_screenshot' => !empty($applicant->twibbon_screenshot_path),
                 'has_essay_file' => !empty($applicant->essay_file_path),
                 'created_at' => $applicant->created_at->toIso8601String(),

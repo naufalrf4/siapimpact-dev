@@ -47,7 +47,7 @@ interface ApplicantDetail {
     semester: number;
     gpa: number;
     has_recommendation_letter: boolean;
-    has_twibbon_image: boolean;
+    has_instagram_follow_proof: boolean;
     has_twibbon_screenshot: boolean;
     has_essay_file: boolean;
     created_at: string;
@@ -144,23 +144,24 @@ export function ApplicantDetailModal({
 
     // Count current required documents for new registrations.
     const getDocumentCount = () => {
-        if (!applicant) return { available: 0, total: 3 };
+        if (!applicant) return { available: 0, total: 4 };
 
         const available = [
             applicant.has_recommendation_letter,
+            applicant.has_instagram_follow_proof,
             applicant.has_twibbon_screenshot,
             applicant.has_essay_file,
         ].filter(Boolean).length;
 
-        return { available, total: 3 };
+        return { available, total: 4 };
     };
 
     const getFileLabel = (type: PreviewType): string => {
         const labels = {
             recommendation_letter: 'Surat Rekomendasi',
-            twibbon_image: 'Foto Twibbon',
+            twibbon_image: 'Bukti Follow Instagram',
             twibbon_screenshot: 'Screenshot Twibbon',
-            essay: 'Esai',
+            essay: 'Essay',
         };
         return type ? labels[type] : '';
     };
@@ -461,6 +462,20 @@ export function ApplicantDetailModal({
                                     }
                                 />
                                 <DocumentButton
+                                    label="Bukti Follow Instagram"
+                                    description="Bukti follow @sakina.kemendukbangga"
+                                    icon={<Image className="h-5 w-5" />}
+                                    available={
+                                        applicant.has_instagram_follow_proof
+                                    }
+                                    onPreview={() =>
+                                        setPreviewMode('twibbon_image')
+                                    }
+                                    onDownload={() =>
+                                        handleDownload('twibbon_image')
+                                    }
+                                />
+                                <DocumentButton
                                     label="Screenshot Twibbon"
                                     description="Bukti posting twibbon"
                                     icon={<Image className="h-5 w-5" />}
@@ -473,38 +488,14 @@ export function ApplicantDetailModal({
                                     }
                                 />
                                 <DocumentButton
-                                    label="Esai"
-                                    description="PDF esai pendaftar"
+                                    label="Essay"
+                                    description="PDF essay pendaftar"
                                     icon={<FileText className="h-5 w-5" />}
                                     available={applicant.has_essay_file}
                                     onPreview={() => setPreviewMode('essay')}
                                     onDownload={() => handleDownload('essay')}
                                 />
                             </div>
-
-                            {applicant.has_twibbon_image && (
-                                <div className="mt-4 border-t pt-4">
-                                    <p className="mb-3 text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase">
-                                        Dokumen legacy
-                                    </p>
-                                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                                        <DocumentButton
-                                            label="Foto Twibbon"
-                                            description="File twibbon dari pendaftaran versi lama"
-                                            icon={<Image className="h-5 w-5" />}
-                                            available={
-                                                applicant.has_twibbon_image
-                                            }
-                                            onPreview={() =>
-                                                setPreviewMode('twibbon_image')
-                                            }
-                                            onDownload={() =>
-                                                handleDownload('twibbon_image')
-                                            }
-                                        />
-                                    </div>
-                                </div>
-                            )}
                         </Section>
 
                         {/* Metadata Section */}

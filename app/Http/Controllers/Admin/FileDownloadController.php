@@ -20,7 +20,7 @@ class FileDownloadController extends Controller
 
     protected array $typeLabels = [
         'recommendation_letter' => 'Recommendation_Letter',
-        'twibbon_image' => 'Twibbon_Image',
+        'twibbon_image' => 'Instagram_Follow_Proof',
         'twibbon_screenshot' => 'Twibbon_Screenshot',
         'essay' => 'Essay',
     ];
