@@ -51,6 +51,7 @@ class RegistrationController extends Controller
 
         $files = [
             'recommendation_letter' => $request->file('recommendation_letter'),
+            'twibbon_image' => $request->file('twibbon_image'),
             'twibbon_screenshot' => $request->file('twibbon_screenshot'),
             'essay_file' => $request->file('essay_file'),
         ];
@@ -75,7 +76,7 @@ class RegistrationController extends Controller
 
             return back()->withErrors([
                 'general' => 'Terjadi kesalahan saat memproses pendaftaran. Silakan coba lagi.',
-            ])->withInput($request->except(['recommendation_letter', 'twibbon_screenshot', 'essay_file']));
+            ])->withInput($request->except(['recommendation_letter', 'twibbon_image', 'twibbon_screenshot', 'essay_file']));
         }
     }
 
