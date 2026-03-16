@@ -43,18 +43,21 @@ import { validateField } from '@/lib/form-validation';
 
 interface FileState {
     recommendation_letter: File | null;
+    twibbon_image: File | null;
     twibbon_screenshot: File | null;
     essay_file: File | null;
 }
 
 interface FileError {
     recommendation_letter: string | null;
+    twibbon_image: string | null;
     twibbon_screenshot: string | null;
     essay_file: string | null;
 }
 
 const FILE_SIZE_LIMITS = {
     recommendation_letter: 10 * 1024 * 1024, // 10MB
+    twibbon_image: 5 * 1024 * 1024, // 5MB
     twibbon_screenshot: 5 * 1024 * 1024, // 5MB
     essay_file: 10 * 1024 * 1024, // 10MB
 };
@@ -86,12 +89,14 @@ export default function Register() {
 
     const [files, setFiles] = useState<FileState>({
         recommendation_letter: null,
+        twibbon_image: null,
         twibbon_screenshot: null,
         essay_file: null,
     });
 
     const [fileErrors, setFileErrors] = useState<FileError>({
         recommendation_letter: null,
+        twibbon_image: null,
         twibbon_screenshot: null,
         essay_file: null,
     });
@@ -180,6 +185,8 @@ export default function Register() {
         switch (field) {
             case 'recommendation_letter':
                 return 'Format: PDF, Maks. 10MB';
+            case 'twibbon_image':
+                return 'Format: JPG/PNG, Maks. 5MB';
             case 'twibbon_screenshot':
                 return 'Format: JPG/PNG, Maks. 5MB';
             case 'essay_file':
@@ -839,6 +846,67 @@ export default function Register() {
                                                     <ImageIcon className="h-4 w-4" />
                                                     Editor Twibbon
                                                 </Button>
+                                            </div>
+
+                                            {/* Twibbon Screenshot */}
+                                            <div className="grid gap-2">
+                                                <Label htmlFor="twibbon_image">
+                                                    Upload bukti follow
+                                                    Instagram{' '}
+                                                    <a
+                                                        href="https://instagram.com/sakina.kemendukbangga"
+                                                        target="_blank"
+                                                        rel="noreferrer"
+                                                        className="text-primary underline underline-offset-4"
+                                                    >
+                                                        @sakina.kemendukbangga
+                                                    </a>{' '}
+                                                    *
+                                                </Label>
+                                                <Input
+                                                    id="twibbon_image"
+                                                    name="twibbon_image"
+                                                    type="file"
+                                                    accept=".jpg,.jpeg,.png"
+                                                    required
+                                                    onChange={handleFileChange(
+                                                        'twibbon_image',
+                                                    )}
+                                                    className="file:mr-4 file:rounded-md file:border-0 file:bg-primary file:px-4 file:py-1 file:text-sm file:font-medium file:text-primary-foreground hover:file:bg-primary/90"
+                                                    aria-invalid={
+                                                        !!errors.twibbon_image ||
+                                                        !!fileErrors.twibbon_image
+                                                    }
+                                                />
+                                                <p className="flex items-center gap-1 text-xs text-muted-foreground">
+                                                    <ImageIcon className="h-3 w-3" />
+                                                    {getFileHint(
+                                                        'twibbon_image',
+                                                    )}
+                                                    {files.twibbon_image &&
+                                                        !fileErrors.twibbon_image && (
+                                                            <span className="ml-2 text-primary">
+                                                                ✓{' '}
+                                                                {
+                                                                    files
+                                                                        .twibbon_image
+                                                                        .name
+                                                                }
+                                                            </span>
+                                                        )}
+                                                </p>
+                                                {fileErrors.twibbon_image && (
+                                                    <InputError
+                                                        message={
+                                                            fileErrors.twibbon_image
+                                                        }
+                                                    />
+                                                )}
+                                                <InputError
+                                                    message={
+                                                        errors.twibbon_image
+                                                    }
+                                                />
                                             </div>
 
                                             {/* Twibbon Screenshot */}
